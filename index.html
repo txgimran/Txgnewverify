@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Device Verification</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #111;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+    transition: background-color 0.5s ease;
+    overflow: hidden;
+  }
+
+  /* Enhanced Nested/Layered Loader */
+  .loader-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin-bottom: 30px;
+    perspective: 1000px;
+  }
+
+  .circle-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    animation: rotate3d 4s linear infinite;
+    transform-style: preserve-3d;
+  }
+
+  .circle-layer:nth-child(1) { 
+    border-top-color: #4caf50; 
+    animation-delay: 0s;
+    box-shadow: 0 0 20px #4caf50;
+  }
+  .circle-layer:nth-child(2) { 
+    border-right-color: #45a049; 
+    animation-delay: 0.1s;
+    transform: rotateX(30deg) rotateY(30deg);
+    box-shadow: 0 0 18px #45a049;
+  }
+  .circle-layer:nth-child(3) { 
+    border-bottom-color: #3d8b40; 
+    animation-delay: 0.2s;
+    transform: rotateX(60deg) rotateY(60deg);
+    box-shadow: 0 0 16px #3d8b40;
+  }
+  .circle-layer:nth-child(4) { 
+    border-left-color: #357c38; 
+    animation-delay: 0.3s;
+    transform: rotateX(90deg) rotateY(90deg);
+    box-shadow: 0 0 14px #357c38;
+  }
+  .circle-layer:nth-child(5) { 
+    border-top-color: #2e6e31; 
+    animation-delay: 0.4s;
+    transform: rotateX(120deg) rotateY(120deg);
+    box-shadow: 0 0 12px #2e6e31;
+  }
+  .circle-layer:nth-child(6) { 
+    border-right-color: #275f29; 
+    animation-delay: 0.5s;
+    transform: rotateX(150deg) rotateY(150deg);
+    box-shadow: 0 0 10px #275f29;
+  }
+  .circle-layer:nth-child(7) { 
+    border-bottom-color: #205022; 
+    animation-delay: 0.6s;
+    transform: rotateX(180deg) rotateY(180deg);
+    box-shadow: 0 0 8px #205022;
+  }
+  .circle-layer:nth-child(8) { 
+    border-left-color: #19421b; 
+    animation-delay: 0.7s;
+    transform: rotateX(210deg) rotateY(210deg);
+    box-shadow: 0 0 6px #19421b;
+  }
+  .circle-layer:nth-child(9) { 
+    border-top-color: #123314; 
+    animation-delay: 0.8s;
+    transform: rotateX(240deg) rotateY(240deg);
+    box-shadow: 0 0 4px #123314;
+  }
+  .circle-layer:nth-child(10) { 
+    border-right-color: #0b250c; 
+    animation-delay: 0.9s;
+    transform: rotateX(270deg) rotateY(270deg);
+    box-shadow: 0 0 2px #0b250c;
+  }
+
+  /* Inner pulsating core */
+  .core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    background: #4caf50;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 30px #4caf50;
+  }
+
+  @keyframes rotate3d {
+    0% { 
+      transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+    }
+    25% { 
+      transform: rotateX(90deg) rotateY(90deg) rotateZ(90deg);
+    }
+    50% { 
+      transform: rotateX(180deg) rotateY(180deg) rotateZ(180deg);
+    }
+    75% { 
+      transform: rotateX(270deg) rotateY(270deg) rotateZ(270deg);
+    }
+    100% { 
+      transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% { 
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+    50% { 
+      transform: translate(-50%, -50%) scale(1.5);
+      opacity: 0.7;
+    }
+  }
+
+  .screen {
+    display: none;
+    text-align: center;
+    z-index: 10;
+  }
+  .screen.active {
+    display: block;
+    animation: fadeIn 0.8s ease;
+  }
+
+  @keyframes fadeIn {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+  }
+
+  .message {
+    font-size: 1.5em;
+    margin-top: 20px;
+    text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+  }
+
+  .auto-close {
+    font-size: 0.8em;
+    color: #ccc;
+    margin-top: 10px;
+  }
+
+  .developer {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    color: #666;
+    font-size: 12px;
+    z-index: 10;
+  }
+  
+  .developer a {
+    color: #4caf50;
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div id="loadingScreen" class="screen active">
+  <div class="loader-container">
+    <div class="circle-layer"></div>
+    <div class="circle-layer"></div>
+    <div class="circle-layer"></div>
+    <div class="circle-layer"></div>
+    <div class="circle-layer"></div>
+    <div class="circle-layer"></div>
+    <div class="circle-layer"></div>
+    <div class="circle-layer"></div>
+    <div class="circle-layer"></div>
+    <div class="circle-layer"></div>
+    <div class="core"></div>
+  </div>
+  <div class="message">Verifying device security...</div>
+</div>
+
+<!-- Success Screen -->
+<div id="successScreen" class="screen">
+  <div class="message">✅ Verified Success</div>
+  <div class="auto-close" id="successTimer">Auto closing in 3 seconds...</div>
+</div>
+
+<!-- Already Verified Screen -->
+<div id="alreadyScreen" class="screen">
+  <div class="message">📱 Device Already Verified</div>
+  <div class="message">This device can only verify once per bot</div>
+</div>
+
+<!-- Failed Screen -->
+<div id="failedScreen" class="screen">
+  <div class="message">❌ Verification Failed</div>
+  <div class="message">This app requires a mobile device</div>
+</div>
+
+<!-- VPN Blocked Screen -->
+<div id="vpnScreen" class="screen">
+  <div class="message">🛡️ VPN Detected</div>
+  <div class="message">Please disable VPN and try again</div>
+</div>
+
+<!-- Developer Credit -->
+<div class="developer">
+  Developer by <a href="https://t.me/txgimran" target="_blank">#Txg</a>
+</div>
+
+<script>
+  // Configuration
+  const urlParams = new URLSearchParams(window.location.search);
+  const webhookUrl = urlParams.get('webhookUrl') ? decodeURIComponent(urlParams.get('webhookUrl')) : '';
+  const botId = urlParams.get('botId') || 'default-bot';
+  
+  // Storage Keys - Now bot-specific to enforce 1 device = 1 time per bot
+  const DEVICE_HASH_KEY = `txg_device_hash_${botId}`;
+  const VERIFICATION_STATUS_KEY = `txg_verified_${botId}`;
+  
+  let deviceHash = '';
+
+  function detectDevice() {
+    const ua = navigator.userAgent || navigator.vendor || window.opera;
+    const isMobile = /android|iphone|ipad|iPod|windows phone/i.test(ua.toLowerCase());
+    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    
+    return (isMobile && hasTouch) ? "Mobile" : "Desktop";
+  }
+
+  function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+  }
+
+  function autoCloseTimer(screenId, seconds = 3) {
+    let timeLeft = seconds;
+    const timerElement = document.getElementById(screenId + 'Timer');
+    
+    if (timerElement) {
+      const timerInterval = setInterval(() => {
+        timerElement.textContent = `Auto closing in ${timeLeft} seconds...`;
+        timeLeft--;
+        
+        if (timeLeft < 0) {
+          clearInterval(timerInterval);
+          window.close();
+        }
+      }, 1000);
+    } else {
+      setTimeout(() => {
+        window.close();
+      }, seconds * 1000);
+    }
+  }
+
+  function createDeviceHash() {
+    const factors = [
+      navigator.userAgent,
+      navigator.hardwareConcurrency,
+      screen.width + 'x' + screen.height,
+      screen.colorDepth,
+      navigator.language,
+      new Date().getTimezoneOffset(),
+      navigator.platform,
+      Math.random().toString(36).substr(2, 9)
+    ].join('|');
+    
+    let hash = 0;
+    for (let i = 0; i < factors.length; i++) {
+      const char = factors.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash;
+    }
+    
+    return 'TXG_' + Math.abs(hash).toString(36).slice(0, 10).toUpperCase();
+  }
+
+  function getDeviceHash() {
+    // Get device hash specific to this bot
+    let hash = localStorage.getItem(DEVICE_HASH_KEY);
+    if (!hash) {
+      hash = createDeviceHash();
+      localStorage.setItem(DEVICE_HASH_KEY, hash);
+    }
+    return hash;
+  }
+
+  function isDeviceVerified() {
+    // Check if this device is already verified for this specific bot
+    return localStorage.getItem(VERIFICATION_STATUS_KEY) === 'verified';
+  }
+
+  function markDeviceAsVerified() {
+    // Mark this device as verified for this specific bot (ONE TIME ONLY)
+    localStorage.setItem(VERIFICATION_STATUS_KEY, 'verified');
+  }
+
+  async function checkForVPN() {
+    try {
+      const pc = new RTCPeerConnection({ iceServers: [] });
+      pc.createDataChannel('');
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      
+      return new Promise(resolve => {
+        let vpnDetected = false;
+        
+        pc.onicecandidate = (ice) => {
+          if (!ice || !ice.candidate) {
+            resolve(vpnDetected);
+            return;
+          }
+          
+          const candidate = ice.candidate.candidate;
+          if (candidate.includes('relay') || candidate.includes('srflx') || 
+              candidate.includes('turn') || candidate.includes('vpn') ||
+              candidate.includes('proxy')) {
+            vpnDetected = true;
+          }
+        };
+        
+        setTimeout(() => resolve(vpnDetected), 1500);
+      });
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function sendWebhook(status, results) {
+    if (!webhookUrl) return;
+    
+    const payload = {
+      botId: botId,
+      status: status,
+      results: results,
+      timestamp: new Date().toISOString(),
+      device_hash: deviceHash
+    };
+    
+    // Use sendBeacon for reliable delivery
+    const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+    navigator.sendBeacon(webhookUrl, blob);
+  }
+
+  async function verifyDevice() {
+    deviceHash = getDeviceHash();
+    const device = detectDevice();
+
+    setTimeout(async () => {
+      if (device === "Mobile") {
+        // Check for VPN
+        const vpnDetected = await checkForVPN();
+        
+        if (vpnDetected) {
+          // VPN detected - show VPN screen
+          document.body.style.backgroundColor = '#ff9800';
+          showScreen('vpnScreen');
+          sendWebhook('vpn_blocked', {
+            user_hash: deviceHash,
+            device_id: deviceHash,
+            bot_id: botId,
+            vpn: 'true',
+            captcha: 'false'
+          });
+        } else {
+          // Check if device already verified for THIS BOT (ONE TIME ONLY)
+          if (isDeviceVerified()) {
+            // Device already verified for this bot - PERMANENTLY BLOCKED
+            document.body.style.backgroundColor = '#ff9800';
+            showScreen('alreadyScreen');
+            sendWebhook('already_verified', {
+              user_hash: deviceHash,
+              device_id: deviceHash,
+              bot_id: botId,
+              vpn: 'false',
+              captcha: 'false',
+              note: 'device_already_used'
+            });
+          } else {
+            // First time verification for this device on this bot
+            document.body.style.backgroundColor = '#4caf50';
+            markDeviceAsVerified(); // PERMANENTLY MARK AS USED
+            showScreen('successScreen');
+            autoCloseTimer('success', 3);
+            sendWebhook('verified', {
+              user_hash: deviceHash,
+              device_id: deviceHash,
+              bot_id: botId,
+              vpn: 'false',
+              captcha: 'true',
+              note: 'first_time_verification'
+            });
+          }
+        }
+      } else {
+        // Desktop device
+        document.body.style.backgroundColor = '#f44336';
+        showScreen('failedScreen');
+        sendWebhook('failed', {
+          user_hash: deviceHash,
+          device_type: 'desktop',
+          bot_id: botId,
+          vpn: 'false',
+          captcha: 'false'
+        });
+      }
+    }, 3000);
+  }
+
+  // Start verification when page loads
+  window.onload = verifyDevice;
+
+  // Security: Prevent right-click and inspect
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
+    if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'i')) {
+      e.preventDefault();
+    }
+  });
+</script>
+
+</body>
+</html>
